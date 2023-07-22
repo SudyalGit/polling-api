@@ -11,6 +11,10 @@ const questionSchema = new mongoose.Schema({
       ref: 'Option',
     },
   ],
+  vote: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Question = mongoose.model('Question', questionSchema);

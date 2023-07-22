@@ -20,7 +20,8 @@ module.exports.createOption = async function(req, res){
             return res.status(404).json({ message: 'Question not found' });
         }
         const option = await Option.create({
-            text: req.body.text
+            text: req.body.text,
+            question: req.params.id
         });
 
         const link = `http://localhost:8000/option/${option.id}/add_vote`;
@@ -30,7 +31,7 @@ module.exports.createOption = async function(req, res){
         const questionOptions = question.options;
         questionOptions.push(option._id);
         await Question.updateOne({_id: question._id}, {$set:{options :questionOptions}});
-        return res.status(200).json(option);
+        return res.status(200).json(await Option.findById(option.id));
     } catch (error) {
         return res.status(500).json({
             error: "Internal server error"
@@ -74,6 +75,11 @@ module.exports.delete = async function(req, res){
         if(!question){
             return res.status(400).json({
                 error: "Question not found"
+            })
+        }
+        if(question.vote){
+            return res.status(400).json({
+                error: "Can't delete this question as it has votes"
             })
         }
         await question.deleteOne();
