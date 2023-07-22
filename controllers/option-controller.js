@@ -48,3 +48,19 @@ module.exports.vote = async function(req, res){
     }
 }
 
+module.exports.viewOne = async function(req, res){
+    try {
+        const id = req.params.id;
+        const option = await Option.findById(id);
+        if(!option){
+            return res.status(400).json({
+                error: "Option not found"
+            })
+        }
+        res.status(200).json(option);
+    } catch (error) {
+        return res.status(500).json({
+            error: "Internal server error"
+        })
+    }
+}
